@@ -3,6 +3,7 @@
   today: new Date(),
   cache: false,
   type: {
+    "记了": "log",
     "过了": "life",
     "尝了": "food",
     "去了": "event",
@@ -292,17 +293,16 @@ async function initPage() {
   const data = await fetchData();
 
   const fragment = new DocumentFragment();
-  fragment.innerHTML = `<li><a href="/log/" data-type="log"><span class="font-num" data-name="记了">${data.list.length}</span></a></li>`;
   Object.entries(site.type).forEach(([type, slug]) => {
-    if (data.type[type]) {
+    if (data.type[type] || slug === "log") {
       const item = document.createElement("li");
       const link = document.createElement("a");
-      link.href = `/log/${slug}/`;
+      link.href = slug === "log" ? `/log/` : `/log/${slug}/`;
       link.dataset.type = slug;
       const span = document.createElement("span");
-      span.dataset.name = type;
       span.className = "font-num";
-      span.textContent = data.type[type].length || 0;
+      span.dataset.name = type;
+      span.textContent = data.type[type]?.length || data.list.length || 0;
 
       link.appendChild(span);
       item.appendChild(link);
