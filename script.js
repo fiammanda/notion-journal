@@ -204,26 +204,21 @@ function renderHTML(raw) {
     let html = "";
     let listItem = [];
     let listType = null;
-    let listNested = false;
 
     const renderList = () => {
       if (listItem.length === 0) return "";
-      const t = listType === "numbered_list" ? "ol" : "ul";
-      const h = listItem.join("");
-      const c = listNested ? ` class="nested"` : "";
+      const tag = listType === "numbered_list" ? "ol" : "ul";
+      const txt = listItem.join("");
       listItem = [];
-      return `<${t}${c}>${h}</${t}>`;
+      return `<${tag}>${txt}</${tag}>`;
     };
 
     for (const id of blocks) {
       const block = raw[id]?.value;
-      if (!block?.properties) continue;
-
       const type = block.type;
-      const text = renderTitle(block.properties.title || []).replace(/::([a-z_]+)::/g, `<span data-icon="$1"></span>`);
+      const text = renderTitle(block.properties?.title || []).replace(/::([a-z_]+)::/g, `<span data-icon="$1"></span>`);
       const children = block.content || [];
       const renderChildren = () => (children.length > 0 ? renderBlock(children, depth + 1) : "");
-
       if (["bulleted_list", "numbered_list", "to_do"].includes(type)) {
         if (listType !== type && listItem.length > 0) {
           html += renderList();
@@ -234,13 +229,11 @@ function renderHTML(raw) {
           const checked = block.properties.checked?.[0][0] === "Yes";
           task = ` class="task${checked ? " task-checked" : ""}"`;
         }
-        if (renderChildren) listNested = true;
         listItem.push(`<li${task}>${text}${renderChildren()}</li>`);
       } else {
         if (listItem.length > 0) {
           html += renderList();
         }
-
         switch (type) {
           case "text":
             html += `<p>${text}</p>`;
@@ -257,11 +250,12 @@ function renderHTML(raw) {
           case "quote":
             html += `<blockquote>${text}</blockquote>`;
             break;
+          case "callout":
+            html += `<blockquote class="callout">${renderChildren()}</blockquote>`;
+            children.length = 0;
+            break;
           case "code":
             html += `<pre><code>${text}</code></pre>`;
-            break;
-          case "callout":
-            html += `<div class="callout">${text}</div>`;
             break;
           case "divider":
             html += `<hr />`;
@@ -269,13 +263,9 @@ function renderHTML(raw) {
           default:
             break;
         }
-
-        if (children.length > 0) {
-          html += renderChildren();
-        }
+        html += renderChildren();
       }
     }
-
     html += renderList();
     return html;
   }
@@ -403,7 +393,7 @@ async function loadPage(path = location.pathname) {
               ${items.map((item) => `
                 <li>
                   <figure>
-                    <img src="${item.Cover[0].url}" loading="lazy" onload="this.removeAttribute('onload')" />
+                    <img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.removeAttribute('onload')" />
                   </figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>

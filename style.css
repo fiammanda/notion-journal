@@ -59,6 +59,16 @@ img {
   transition: .2s ease-in;
   transition-property: opacity;
 }
+hr {
+  display: flex;
+  margin: 1.5rem auto;
+  justify-content: center;
+  border: none;
+}
+hr::before {
+  content: "more_horiz";
+  font: 1.5rem/.5 "Material Symbols Rounded";
+}
 
 h1 {
   font-size: 1.5rem;
