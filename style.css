@@ -94,6 +94,9 @@ p {
   margin: 0;
   text-align: justify;
 }
+p:empty {
+  height: 1.5rem;
+}
 blockquote {
   margin: .75rem 0;
   padding: .5rem 0;
