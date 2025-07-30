@@ -58,7 +58,6 @@ figure {
   display: flex;
   border-radius: .25rem;
   overflow: hidden;
-  filter: grayscale(.6);
   opacity: .6;
   transition: .2s ease-in;
   transition-property: opacity;
