@@ -52,7 +52,7 @@ async function fetchData() {
       }
     });
     const order = Object.fromEntries(Object.keys(site.type).map((type, index) => [type, index]));
-    const res = await fetch(`https://notion-api.splitbee.io/v1/table/1f687eb7522d8034a114c14834a8244c`);
+    const res = await fetch(`https://notion.nuu.qzz.io/table/1f687eb7522d8034a114c14834a8244c`);
     const raw = await res.json();
     raw.sort((x, y) => {
       const dateX = x.Date ? new Date(x.Date) : new Date(0);
@@ -90,7 +90,7 @@ async function fetchData() {
 async function fetchPage(id) {
   let data = JSON.parse(localStorage.getItem(`data_${id}`)) || null;
   if (!site.cache || !data) {
-    const res = await fetch(`https://notion-api.splitbee.io/v1/page/${id}`);
+    const res = await fetch(`https://notion.nuu.qzz.io/page/${id}`);
     data = await res.json();
     localStorage.setItem(`data_${id}`, JSON.stringify(data));
   }
@@ -235,6 +235,9 @@ function renderHTML(raw) {
           html += renderList();
         }
         switch (type) {
+          case "image":
+            html += `<figure><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.removeAttribute('onload')"></figure>`;
+            break;
           case "text":
             html += `<p>${text}</p>`;
             break;
@@ -248,7 +251,7 @@ function renderHTML(raw) {
             html += `<h6>${text}</h6>`;
             break;
           case "quote":
-            html += `<blockquote>${text}</blockquote>`;
+            html += `<blockquote><p>${text}</p></blockquote>`;
             break;
           case "callout":
             html += `<blockquote class="callout">${renderChildren()}</blockquote>`;
@@ -267,6 +270,7 @@ function renderHTML(raw) {
       }
     }
     html += renderList();
+    html = html.replace(/<\/p><\/blockquote><blockquote><p>/g, "</p><p>")
     return html;
   }
 
@@ -387,14 +391,12 @@ async function loadPage(path = location.pathname) {
       title += ` - #${slug[0].toUpperCase() + slug.slice(1)}`;
       if (["novel", "book", "show", "game"].includes(slug)) {
         html = `
-          <article data-url="/log/cover/">
+          <article data-url="${path}" data-layout="album">
             <h2>${type} <span data-type="${slug}"></span></h2>
             <ul class="journal-list">
               ${items.map((item) => `
                 <li>
-                  <figure>
-                    <img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.removeAttribute('onload')" />
-                  </figure>
+                  <figure>${item.Cover ? `<img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.removeAttribute('onload')" />` : ``}</figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>
                     <p class="journal-meta">${formatMeta(item)}</p>
@@ -448,7 +450,7 @@ async function loadPage(path = location.pathname) {
               </h3>
               ${page.Tags || page.Rate ? `<div class="journal-meta">${formatMeta(page)}</div>` : ""}
               ${page.Summary ? `<div class="journal-summary">${page.Summary}</div>` : ""}
-              <div>${page.HTML}</div>
+              <div class="journal-content">${page.HTML}</div>
             </section>
           `).join("")}
         </article>

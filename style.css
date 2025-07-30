@@ -54,6 +54,15 @@ code {
   transition: .2s ease-in;
   transition-property: background;
 }
+figure {
+  display: flex;
+  border-radius: .25rem;
+  overflow: hidden;
+  filter: grayscale(.6);
+  opacity: .6;
+  transition: .2s ease-in;
+  transition-property: opacity;
+}
 img {
   max-width: 100%;
   transition: .2s ease-in;
@@ -100,8 +109,9 @@ p:empty {
 blockquote {
   margin: .75rem 0;
   padding: .5rem 0;
-  font-family: "LXGW WenKai", "LXGW WenKai TC", var(--font-family);
+  font-family: "LXGW WenKai", var(--font-family);
   text-align: justify;
+  text-indent: 2em;
   color: var(--color-secondary-030);
   border-top: 1px solid var(--color-secondary-050);
   border-bottom: 1px solid var(--color-secondary-050);
@@ -111,7 +121,11 @@ blockquote {
 ul {
   margin: 1.5rem 0;
   padding: 0 0 0 1rem;
+  text-align: justify;
   list-style-type: "- ";
+}
+ul ul {
+  margin: 0;
 }
 li::marker {
   color: var(--color-primary-050);
@@ -584,11 +598,11 @@ nav a[rel="next"] {
   }
 }
 
-section ul {
-  text-align: justify;
+section figure + p:not(:empty) {
+  margin: .5rem 0 0;
 }
-ul ul {
-  margin: 0;
+section figure:hover {
+  opacity: 1;
 }
 .task {
   list-style-type: none;
@@ -638,35 +652,34 @@ ul ul {
   opacity: .75;
 }
 
-[data-url="/log/cover/"] li {
+[data-layout="album"] li {
   display: flex;
   align-items: flex-start;
   margin: 0 0 1.5rem;
 }
-[data-url="/log/cover/"] li a {
+[data-layout="album"] li a {
   color: var(--color-primary-050);
 }
 @media (hover: hover) {
-  [data-url="/log/cover/"] li a:hover {
+  [data-layout="album"] li a:hover {
     color: var(--color-neutral-010);
   }
 }
-[data-url="/log/cover/"] li figure {
-  display: flex;
+[data-layout="album"] li figure {
   flex: 0 0 81px;
   margin: 0 1rem 0 0;
   min-height: 108px;
-  border-radius: .25rem;
-  overflow: hidden;
-  filter: grayscale(.5);
-  opacity: .6;
-  transition: .2s ease-in;
-  transition-property: opacity;
 }
-[data-url="/log/cover/"] li:hover figure {
+[data-layout="album"][data-url="/log/game/"] li figure {
+  flex: 0 0 231px;
+}
+[data-layout="album"][data-url="/log/game/"] li figure:empty {
+  background: url("log-game.jpg") center / cover;
+}
+[data-layout="album"] li:hover figure {
   opacity: 1;
 }
-[data-url="/log/cover/"] li .journal-meta {
+[data-layout="album"] li .journal-meta {
   margin: 0 0 1rem 0;
 }
 
