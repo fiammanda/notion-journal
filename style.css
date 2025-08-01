@@ -304,20 +304,32 @@ header p a {
   width: 2.5rem;
   transition-property: background;
 }
-.theme::before, .theme::after {
-  content: "brightness_5";
-  position: absolute;
-  height: 1em;
+.theme svg {
+  width: 1rem;
+  height: 1rem;
+  fill: var(--color-neutral-100);
   transition: .2s ease-in;
-  transition-property: color, left, transform;
+  transition-property: fill, transform;
 }
-.theme::after {
-  content: "brightness_4";
-  color: transparent;
+.theme svg path {
+  transform-origin: 50% -50%;
+  transition: .4s cubic-bezier(0.43, 0.06, 0, 1.21) transform;
 }
-.dark .theme::before {
-  color: transparent;
+.theme svg circle {
+  transform: scale(.6) translate(0);
+  transform-origin: 50% -50%;
+  transition: .5s cubic-bezier(0.4, 0, 0.2, 1) transform;
 }
+.dark .theme svg {
+  transform: translate(1rem);
+}
+.dark .theme svg path {
+  transform: rotate(1turn);
+}
+.dark .theme svg circle {
+  transform: scale(1) translate(-10%, -5%);
+}
+
 .reload::before {
   content: "refresh";
   height: 1em;
@@ -462,16 +474,17 @@ header p a {
     margin: 0;
     color: var(--color-neutral-010);
     background: none;
-    transition: none;
   }
-  .theme::before, .theme::after {
-    font: 1.125rem/calc(1.125rem + 1px) "Material Symbols Rounded";
+  .theme svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: var(--color-neutral-010);
+  }
+  .dark .theme svg {
+    transform: none;
   }
   .reload::before {
     font: 1.25rem/calc(1.25rem + 1px) "Material Symbols Rounded";
-  }
-  .dark .theme::after {
-    color: var(--color-neutral-010);
   }
   .menu {
     position: fixed;
@@ -751,6 +764,8 @@ section figure:hover {
 }
 .calendar-body .calendar-today, .calendar-body .calendar-today a {
   color: var(--color-primary-050);
+  transition: .2s ease-in-out;
+  transition-property: color;
 }
 @media (hover: hover) {
   .calendar-head a:hover {
