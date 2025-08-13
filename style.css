@@ -524,6 +524,15 @@ header p a {
     background: var(--color-neutral-095);
   }
 }
+@media (max-width: 30rem) {
+  [data-layout="album"][data-url="/log/game/"] li {
+    display: block;
+  }
+  [data-layout="album"][data-url="/log/game/"] li figure {
+    margin: 0 0 .5rem;
+    aspect-ratio: 2.13868613139 / 1;
+  }
+}
 @media (max-width: 50rem) and (hover: hover) {
   .theme:hover, .reload:hover {
     color: var(--color-primary-050);
@@ -541,6 +550,10 @@ article h3 [data-type] {
   margin: 0 0 0 .25rem;
 }
 article a {
+  color: var(--color-primary-050);
+}
+article a:only-child {
+  display: flex;
   color: var(--color-primary-050);
 }
 .journal-list {
@@ -578,6 +591,9 @@ article a {
   font-size: 1.0625rem;
   line-height: calc(1.0625rem + 1px);
   vertical-align: -18%;
+}
+.journal-summary:empty {
+  display: none;
 }
 p.journal-summary {
   font-size: .875rem;
