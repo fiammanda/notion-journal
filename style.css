@@ -552,16 +552,15 @@ article h3 [data-type] {
 article a {
   color: var(--color-primary-050);
 }
-article a:only-child {
-  display: flex;
-  color: var(--color-primary-050);
-}
 .journal-list {
   padding: 0;
   list-style: none;
 }
 .journal-list .font-num {
   margin: 0 .5rem 0 0;
+}
+.journal-list a:only-child {
+  display: flex;
 }
 .journal-title {
   color: var(--color-neutral-010);
