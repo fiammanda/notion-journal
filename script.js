@@ -1,4 +1,9 @@
-﻿const site = {
+﻿window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+gtag("config", "G-X6KGM1D81L");
+
+const site = {
   title: "紧急飞毯",
   today: new Date(),
   cache: false,
@@ -236,7 +241,7 @@ function renderHTML(raw) {
         }
         switch (type) {
           case "image":
-            html += `<figure><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.removeAttribute('onload')"></figure>`;
+            html += `<figure onload><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')"></figure>`;
             break;
           case "text":
             html += `<p>${text}</p>`;
@@ -359,7 +364,7 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>俊俊的</p>
           <p>${site.title}</p>
-          <p><img src="/logo.gif" loading="lazy" onload="this.removeAttribute('onload')" /></p>
+          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" /></figure>
         </section>
       </article>
     `;
@@ -396,7 +401,7 @@ async function loadPage(path = location.pathname) {
             <ul class="journal-list">
               ${items.map((item) => `
                 <li>
-                  <figure>${item.Cover ? `<img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.removeAttribute('onload')" />` : ``}</figure>
+                  <figure onload>${item.Cover ? `<img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" />` : ``}</figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>
                     <p class="journal-meta">${formatMeta(item)}</p>
@@ -450,7 +455,7 @@ async function loadPage(path = location.pathname) {
               </h3>
               ${page.Tags || page.Rate ? `<div class="journal-meta">${formatMeta(page)}</div>` : ""}
               ${page.Summary ? `<div class="journal-summary">${page.Summary}</div>` : ""}
-              <div class="journal-content">${page.HTML}</div>
+              <div class="journal-content">${page.HTML.replace(/\n +/g, "")}</div>
             </section>
           `).join("")}
         </article>
@@ -467,7 +472,7 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>${site.title}</p>
           <p>404</p>
-          <p><img src="/logo.gif" loading="lazy" onload="this.removeAttribute('onload')" /></p>
+          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" /></figure>
         </section>
       </article>
     `;
