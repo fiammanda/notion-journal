@@ -1,5 +1,5 @@
 ﻿window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
+function gtag() { dataLayer.push(arguments); }
 gtag("js", new Date());
 gtag("config", "G-X6KGM1D81L");
 
@@ -189,15 +189,15 @@ function renderHTML(raw) {
           const [type, info] = deco;
           switch (type) {
             case "a":
-              return `<a href="${info}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+              return `<a href="${info}" target="_blank" rel="noopener noreferrer nofollow">${text}</a>`;
             case "b":
               return `<strong>${text}</strong>`;
             case "c":
               return `<code>${text}</code>`;
-            case "i":
-              return `<em>${text}</em>`;
             case "s":
               return `<del>${text}</del>`;
+            case "i":
+              return `<em>${text}</em>`;
             default:
               return text;
           }
@@ -221,7 +221,10 @@ function renderHTML(raw) {
     for (const id of blocks) {
       const block = raw[id]?.value;
       const type = block.type;
-      const text = renderTitle(block.properties?.title || []).replace(/::([a-z_]+)::/g, `<span data-icon="$1"></span>`);
+      const text = renderTitle(block.properties?.title || [])
+        .replace(/\n/g, `<br />`)
+        .replace(/::([a-z_]+)::/g, `<span data-icon="$1"></span>`);
+      const lang = /^[-\w\s,.!?;:'"()<>/\u00C0-\u017F]+$/.test(text) ? ` lang="en"` : ``;
       const children = block.content || [];
       const renderChildren = () => (children.length > 0 ? renderBlock(children, depth + 1) : "");
       if (["bulleted_list", "numbered_list", "to_do"].includes(type)) {
@@ -234,7 +237,7 @@ function renderHTML(raw) {
           const checked = block.properties.checked?.[0][0] === "Yes";
           task = ` class="task${checked ? " task-checked" : ""}"`;
         }
-        listItem.push(`<li${task}>${text}${renderChildren()}</li>`);
+        listItem.push(`<li${task}${lang}>${text}${renderChildren()}</li>`);
       } else {
         if (listItem.length > 0) {
           html += renderList();
@@ -244,7 +247,7 @@ function renderHTML(raw) {
             html += `<figure onload><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')"></figure>`;
             break;
           case "text":
-            html += `<p>${text}</p>`;
+            html += `<p${lang}>${text}</p>`;
             break;
           case "header":
             html += `<h4>${text}</h4>`;
@@ -256,7 +259,7 @@ function renderHTML(raw) {
             html += `<h6>${text}</h6>`;
             break;
           case "quote":
-            html += `<blockquote><p>${text}</p></blockquote>`;
+            html += `<blockquote><p${lang}>${text}</p></blockquote>`;
             break;
           case "callout":
             html += `<blockquote class="callout">${renderChildren()}</blockquote>`;
@@ -275,7 +278,7 @@ function renderHTML(raw) {
       }
     }
     html += renderList();
-    html = html.replace(/<\/p><\/blockquote><blockquote><p>/g, "</p><p>")
+    html = html.replace(/<\/p><\/blockquote><blockquote><p/g, "</p><p")
     return html;
   }
 
@@ -314,7 +317,7 @@ async function initPage() {
     const a = e.target.closest("a");
     if (a && a.getAttribute("href")?.startsWith("/")) {
       e.preventDefault();
-      site.main.ariaHidden = "true";
+      site.main.dataset.load = "true";
       document.body.classList.remove("side");
       setTimeout(() => {
         document.title.endsWith("迷路啦！") ? history.replaceState(null, "", a.getAttribute("href")) : history.pushState(null, "", a.getAttribute("href"));
@@ -322,7 +325,7 @@ async function initPage() {
       }, 200);
     } else if (a && a.className === "reload") {
       a.ariaDisabled = "true";
-      document.body.ariaHidden = "true";
+      document.body.dataset.load = "true";
       localStorage.removeItem("data_timestamp");
       const path = location.pathname.slice(5, -1);
       if (data.list.includes(path)) {
@@ -480,8 +483,8 @@ async function loadPage(path = location.pathname) {
   }
 
   site.main.innerHTML = html;
-  site.main.removeAttribute("aria-hidden");
-  document.body.removeAttribute("aria-hidden");
+  site.main.removeAttribute("data-load");
+  document.body.removeAttribute("data-load");
   document.title = title;
   document.querySelector(`[href="${path}"]`)?.parentNode.setAttribute("aria-disabled", "true");
 }

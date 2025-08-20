@@ -23,7 +23,7 @@ html {
 }
 body {
   height: 100%;
-  font: 1rem/1.5 var(--font-family);
+  font: 1rem/1.75 var(--font-family);
   font-feature-settings: var(--font-feature);
   color: var(--color-neutral-010);
   background: var(--color-neutral-100);
@@ -104,28 +104,31 @@ h4 {
 }
 
 p {
-  margin: .75rem 0;
+  margin: 1rem 0;
   text-align: justify;
 }
 blockquote {
-  margin: .75rem 0;
+  margin: 1rem 0;
   font-family: "LXGW WenKai", var(--font-family);
   text-align: justify;
   text-indent: 2em;
-  color: var(--color-secondary-030);
-  border-top: 1px solid var(--color-secondary-050);
-  border-bottom: 1px solid var(--color-secondary-050);
+  color: var(--color-secondary-040);
+  border-top: 1px solid var(--color-secondary-060);
+  border-bottom: 1px solid var(--color-secondary-060);
   transition: .2s ease-in;
   transition-property: color, border-color;
 }
 ul {
-  margin: .75rem 0;
+  margin: .1rem 0;
   padding: 0 0 0 1rem;
   text-align: justify;
   list-style-type: "- ";
 }
 ul ul {
   margin: 0;
+}
+li li {
+  color: var(--color-secondary-040);
 }
 li::marker {
   color: var(--color-primary-050);
@@ -176,9 +179,13 @@ nav {
   font-feature-settings: "tnum", var(--font-feature);
   letter-spacing: -1px;
 }
-[aria-hidden="true"] {
+[data-load="true"] {
   opacity: 0;
   pointer-events: none;
+}
+
+[lang="en"] {
+  text-align: left;
 }
 
 [data-type]::before {
@@ -239,6 +246,7 @@ header section {
 }
 header h1 {
   align-self: flex-start;
+  line-height: 1.5;
 }
 header h1 span {
   display: block;
@@ -585,7 +593,7 @@ p.journal-summary {
   font-size: .875rem;
 }
 div.journal-summary {
-  margin: 0 0 1.5rem;
+  margin: 1rem 0;
 }
 
 nav a:empty {
@@ -808,15 +816,15 @@ section figure:hover {
   --color-primary-080: hsl(var(--ch), 80%, var(--cl080));
   --color-primary-090: hsl(var(--ch), calc(80% + 10% * var(--csm)), var(--cl090));
   --color-primary-095: hsl(var(--ch), calc(80% + 10% * var(--csm)), var(--cl095));
-  --color-secondary-030: hsl(var(--ch), calc(15% - 5% * var(--csm)), var(--cl030));
-  --color-secondary-050: hsl(var(--ch), 15%, var(--cl050));
+  --color-secondary-040: hsl(var(--ch), 15%, var(--cl040));
+  --color-secondary-060: hsl(var(--ch), 15%, var(--cl060));
   --color-secondary-080: hsl(var(--ch), calc(15% + 5% * var(--csm)), var(--cl080));
   --font-family: "Inter", -apple-system, "MiSans", "HarmonyOS Sans", "Source Han Sans SC", "Noto Sans CJK SC", "思源黑体", "Noto Sans SC", sans-serif;
   --font-feature: "ss01", "cv01", "cv06", "cv11";
 }
 .dark {
   --ch: 40;
-  --csm: (-1);
+  --csm: -1;
   --cl005: 95%;
   --cl010: 90%;
   --cl020: 85%;
