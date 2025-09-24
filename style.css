@@ -100,7 +100,7 @@ h3 {
 h4 {
   margin: 1.5rem 0 0;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 p {
@@ -186,6 +186,7 @@ nav {
 
 [lang="en"] {
   text-align: left;
+  text-wrap: pretty;
 }
 
 [data-type]::before {
@@ -784,6 +785,13 @@ section figure:hover {
   }
 }
 
+.emoji {
+  margin-inline: .25em;
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: text-bottom;
+}
+
 :root {
   --ch: 200;
   --csm:  1;
@@ -820,7 +828,7 @@ section figure:hover {
   --color-secondary-060: hsl(var(--ch), 15%, var(--cl060));
   --color-secondary-080: hsl(var(--ch), calc(15% + 5% * var(--csm)), var(--cl080));
   --font-family: "Inter", -apple-system, "MiSans", "HarmonyOS Sans", "Source Han Sans SC", "Noto Sans CJK SC", "思源黑体", "Noto Sans SC", sans-serif;
-  --font-feature: "ss01", "cv01", "cv06", "cv11";
+  --font-feature: "ss01", "cv06", "cv11";
 }
 .dark {
   --ch: 40;

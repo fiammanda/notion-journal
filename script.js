@@ -181,6 +181,17 @@ async function formatCalendar() {
 function renderHTML(raw) {
   const blocks = raw[Object.keys(raw)[0]].value?.content || [];
 
+  function renderEmoji(html) {
+    return Array.from(html).map((ch) => {
+      const code = ch.codePointAt(0);
+      if (code > 0x1F000) {
+        const hex = code.toString(16).toUpperCase();
+        return `<img class="emoji" src="https://cdn.jsdelivr.net/npm/@svgmoji/blob@2.0.0/svg/${hex}.svg" alt="${ch}" />`;
+      }
+      return ch;
+    }).join("");
+  }
+
   function renderTitle(title) {
     return title
       .map(([t, d]) => {
@@ -224,7 +235,7 @@ function renderHTML(raw) {
       const text = renderTitle(block.properties?.title || [])
         .replace(/\n/g, `<br />`)
         .replace(/::([a-z_]+)::/g, `<span data-icon="$1"></span>`);
-      const lang = /^[-\w\s,.!?;:'"()<>/\u00C0-\u017F]+$/.test(text) ? ` lang="en"` : ``;
+      const lang = /^[\s\u0020-\u007f\u00C0-\u017F‘’“”]+$/.test(text) ? ` lang="en"` : ``;
       const children = block.content || [];
       const renderChildren = () => (children.length > 0 ? renderBlock(children, depth + 1) : "");
       if (["bulleted_list", "numbered_list", "to_do"].includes(type)) {
@@ -250,13 +261,13 @@ function renderHTML(raw) {
             html += `<p${lang}>${text}</p>`;
             break;
           case "header":
-            html += `<h4>${text}</h4>`;
+            html += `<h3>${text}</h3>`;
             break;
           case "sub_header":
-            html += `<h5>${text}</h5>`;
+            html += `<h4>${text}</h4>`;
             break;
           case "sub_sub_header":
-            html += `<h6>${text}</h6>`;
+            html += `<h5>${text}</h5>`;
             break;
           case "quote":
             html += `<blockquote><p${lang}>${text}</p></blockquote>`;
@@ -279,7 +290,7 @@ function renderHTML(raw) {
     }
     html += renderList();
     html = html.replace(/<\/p><\/blockquote><blockquote><p/g, "</p><p")
-    return html;
+    return renderEmoji(html);
   }
 
   return renderBlock(blocks);
