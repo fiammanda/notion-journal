@@ -383,6 +383,9 @@ header p a {
     left: max(0px, calc(50vw - 40rem));
     width: 20rem;
   }
+  header ul div span {
+    display: block;
+  }
   .theme svg {
     transform: scale(.9) translate(0);
   }
@@ -467,6 +470,15 @@ header p a {
     background: var(--color-neutral-090);
     transition: .2s ease-in;
     transition-property: background;
+  }
+  header ul div {
+    padding: .5rem;
+    font-size: .9375rem;
+    line-height: 1.25;
+  }
+  header ul div::after {
+    content: "sentiment_sad";
+    font: 1rem/1.5 "Material Symbols Rounded";
   }
   header p {
     flex-direction: column;

@@ -50,44 +50,44 @@ function setTheme() {
 
 async function fetchData() {
   const data_timestamp = +localStorage.getItem("data_timestamp");
-  if (data_timestamp < Date.now() - 1000 * 60 * 60 * 24) {
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("data")) {
-        localStorage.removeItem(key);
-      }
-    });
-    const order = Object.fromEntries(Object.keys(site.type).map((type, index) => [type, index]));
-    const res = await fetch(`https://notion.nuu.qzz.io/list/1f687eb7522d8034a114c14834a8244c`);
-    const raw = await res.json();
-    raw.sort((x, y) => {
-      const dateX = x.Date ? new Date(x.Date) : new Date(0);
-      const dateY = y.Date ? new Date(y.Date) : new Date(0);
-      const dateZ = dateY - dateX;
-      if (dateZ !== 0) return dateZ;
-      const typeX = x.Type ?? "";
-      const typeY = y.Type ?? "";
-      return (order[typeX] ?? Infinity) - (order[typeY] ?? Infinity);
-    });
-    site.data = {
-      raw,
-      list: [],
-      date: {},
-      type: {},
-    };
-    for (const item of raw) {
-      const date = item.Date.replace(/-/g, "") || null;
-      const type = item.Type || null;
-      if (date) {
-        (site.data.date[date] ??= []).push(raw.indexOf(item));
-      }
-      if (type) {
-        (site.data.type[type] ??= []).push(raw.indexOf(item));
-      }
+  if (data_timestamp >= Date.now() - 1000 * 60 * 60 * 24) return site.data;
+
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("data")) {
+      localStorage.removeItem(key);
     }
-    site.data.list = Object.keys(site.data.date).reverse();
-    localStorage.setItem("data", JSON.stringify(site.data));
-    localStorage.setItem("data_timestamp", Date.now());
+  });
+  const order = Object.fromEntries(Object.keys(site.type).map((type, index) => [type, index]));
+  const res = await fetch(`https://notion.nuu.qzz.io/list/1f687eb7522d8034a114c14834a8244c`);
+  const raw = await res.json();
+  raw.sort((x, y) => {
+    const dateX = x.Date ? new Date(x.Date) : new Date(0);
+    const dateY = y.Date ? new Date(y.Date) : new Date(0);
+    const dateZ = dateY - dateX;
+    if (dateZ !== 0) return dateZ;
+    const typeX = x.Type ?? "";
+    const typeY = y.Type ?? "";
+    return (order[typeX] ?? Infinity) - (order[typeY] ?? Infinity);
+  });
+  site.data = {
+    list: [],
+    date: {},
+    type: {},
+    raw
+  };
+  for (const item of raw) {
+    const date = item.Date.replace(/-/g, "") || null;
+    const type = item.Type || null;
+    if (date) {
+      (site.data.date[date] ??= []).push(raw.indexOf(item));
+    }
+    if (type) {
+      (site.data.type[type] ??= []).push(raw.indexOf(item));
+    }
   }
+  site.data.list = Object.keys(site.data.date).reverse();
+  localStorage.setItem("data", JSON.stringify(site.data));
+  localStorage.setItem("data_timestamp", Date.now());
   site.cache = true;
   return site.data;
 }
@@ -137,8 +137,10 @@ async function formatCalendar() {
   const today = `${site.today.getFullYear()}${(site.today.getMonth() + 1).toString().padStart(2, "0")}${site.today.getDate().toString().padStart(2, "0")}`;
   let year = site.today.getFullYear();
   let month = site.today.getMonth();
-  let start = data.list[data.list.length - 1];
-  start = new Date(+start.slice(0, 4), +start.slice(4, 6) - 1, +start.slice(6, 8));
+  let first = data.list.length ? data.list[data.list.length - 1] : null;
+  let start = first
+    ? new Date(+first.slice(0, 4), +first.slice(4, 6) - 1, +first.slice(6, 8))
+    : site.today;
 
   function initCal(y, m) {
     calElDate.textContent = `${y} ${(m + 1).toString().padStart(2, "0")}`;
@@ -306,22 +308,26 @@ async function initPage() {
   const data = await fetchData();
 
   const fragment = new DocumentFragment();
-  Object.entries(site.type).forEach(([type, slug]) => {
-    if (data.type[type] || slug === "log") {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = slug === "log" ? `/log/` : `/log/${slug}/`;
-      link.dataset.type = slug;
-      const span = document.createElement("span");
-      span.className = "font-num";
-      span.dataset.name = type;
-      span.textContent = data.type[type]?.length || data.list.length || 0;
+  if (site.data.list.length) {
+    Object.entries(site.type).forEach(([type, slug]) => {
+      if (data.type[type] || slug === "log") {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = slug === "log" ? `/log/` : `/log/${slug}/`;
+        link.dataset.type = slug;
+        const span = document.createElement("span");
+        span.className = "font-num";
+        span.dataset.name = type;
+        span.textContent = data.type[type]?.length || data.list.length || 0;
 
-      link.appendChild(span);
-      item.appendChild(link);
-      fragment.appendChild(item);
-    }
-  });
+        link.appendChild(span);
+        item.appendChild(link);
+        fragment.appendChild(item);
+      }
+    });
+  } else {
+    fragment.append(Object.assign(document.createElement("div"), {innerHTML: "不知为何没有获取到数据 <span>(´ﾟдﾟ`)</span>"}));
+  }
   document.querySelector("header ul").appendChild(fragment);
 
   document.body.addEventListener("click", (e) => {
