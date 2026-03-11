@@ -57,7 +57,7 @@ async function fetchData() {
       }
     });
     const order = Object.fromEntries(Object.keys(site.type).map((type, index) => [type, index]));
-    const res = await fetch(`https://notion.nuu.qzz.io/table/1f687eb7522d8034a114c14834a8244c`);
+    const res = await fetch(`https://notion.nuu.qzz.io/list/1f687eb7522d8034a114c14834a8244c`);
     const raw = await res.json();
     raw.sort((x, y) => {
       const dateX = x.Date ? new Date(x.Date) : new Date(0);
