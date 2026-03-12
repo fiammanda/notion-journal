@@ -54,23 +54,52 @@ code {
   transition: .2s ease-in;
   transition-property: background;
 }
-figure {
-  display: flex;
-  align-items: flex-start;
-  max-height: 64rem;
-  border-radius: .25rem;
-  overflow: hidden;
-  opacity: .75;
-  transition: .2s ease-in;
-  transition-property: max-height, opacity;
-}
-figure[onload] {
-  max-height: 0;
-  opacity: 0;
-}
 img {
   max-width: 100%;
   object-fit: cover;
+  border-radius: .25rem;
+  transition: .2s ease-in;
+  transition-property: opacity;
+}
+figure {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  color: var(--color-neutral-100);
+}
+figure::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-neutral-095);
+  border-radius: .25rem;
+  opacity: 0;
+  z-index: -1;
+  transition: .2s ease-in;
+  transition-property: opacity;
+}
+figure img {
+  opacity: .7;
+}
+figure svg {
+  order: -1;
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: .2s ease-in;
+  transition-property: opacity;
+}
+figure[onload]::before {
+  opacity: 1;
+}
+figure[onload] svg {
+  opacity: 1;
+}
+figure[onload] img {
+  opacity: 0;
 }
 hr {
   display: flex;
@@ -139,7 +168,7 @@ li::marker {
 #site {
   margin: 0 auto;
   max-width: 80rem;
-  transition: .25s ease-in;
+  transition: .2s ease-in;
   transition-property: opacity;
 }
 header, main {
@@ -564,6 +593,9 @@ article a {
   padding: 0;
   list-style: none;
 }
+.journal-list li:hover img {
+  opacity: 1;
+}
 .journal-list .font-num {
   margin: 0 .5rem 0 0;
 }
@@ -608,6 +640,9 @@ p.journal-summary {
 div.journal-summary {
   margin: 1rem 0;
 }
+.journal-content img {
+  cursor: zoom-in;
+}
 
 nav a:empty {
   visibility: hidden;
@@ -634,7 +669,10 @@ nav a[rel="next"] {
   }
 }
 
-section figure:hover {
+section figure img {
+  opacity: .8;
+}
+section figure img:hover {
   opacity: 1;
 }
 .task {
@@ -704,9 +742,6 @@ section figure:hover {
 }
 [data-layout="album"][data-url="/log/game/"] li figure {
   flex: 0 0 231px;
-}
-[data-layout="album"][data-url="/log/game/"] li figure:empty {
-  background: url("log-game.jpg") center / cover;
 }
 [data-layout="album"] li:hover figure {
   opacity: 1;
@@ -797,11 +832,46 @@ section figure:hover {
   }
 }
 
+#lightbox {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: #000d;
+  opacity: 0;
+  overflow: auto;
+  cursor: pointer;
+  z-index: 9;
+  pointer-events: none;
+  transition: opacity .2s ease-in-out;
+}
+#lightbox img {
+  max-width: calc(100dvh - 3rem);
+  max-height: calc(100dvh - 3rem);
+  cursor: crosshair;
+}
+#lightbox img.zoomable {
+  cursor: zoom-in;
+}
+#lightbox img.zoomed {
+  max-width: var(--mw, unset);
+  max-height: var(--mh, unset);
+  cursor: zoom-out;
+}
+.lightbox {
+  overflow: hidden;
+}
+.lightbox #lightbox {
+  opacity: 1;
+  pointer-events: all;
+}
+
 .emoji {
   margin-inline: .25em;
   width: 1.25em;
   height: 1.25em;
-  vertical-align: text-bottom;
+  vertical-align: -10%;
 }
 
 :root {

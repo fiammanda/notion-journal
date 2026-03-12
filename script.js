@@ -24,8 +24,28 @@ const site = {
     "放弃": "star",
   },
   data: JSON.parse(localStorage.getItem("data")) || null,
-  main: document.querySelector("main"),
+  main: document.querySelector("main")
 };
+
+const imgEnd = `loading="lazy" onload="this.parentNode.removeAttribute('onload');setTimeout(() => {this.removeAttribute('onload');}, 10)" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+      <path stroke-dasharray="66" d="M3 14v-9h18v14h-18v-5">
+        <animate fill="freeze" attributeName="stroke-dashoffset" dur=".8s" values="66;0"/>
+      </path>
+      <path stroke-dasharray="26" stroke-dashoffset="26" d="M3 16l4 -3l3 2l6 -5l5 4">
+        <animate fill="freeze" attributeName="stroke-dashoffset" begin=".8s" dur=".5s" to="0" />
+      </path>
+    </g>
+    <g fill="currentColor">
+      <circle cx="7.5" cy="9.5" r="1.5" opacity="0">
+        <animate fill="freeze" attributeName="opacity" begin="1.3s" dur=".25s" to="1" />
+      </circle>
+      <path fill-opacity="0" d="M3 16l4 -3l3 2l6 -5l5 4v5h-18Z">
+        <animate fill="freeze" attributeName="fill-opacity" begin="1.5s" dur=".25s" to="1" />
+      </path>
+    </g>
+  </svg>`;
 
 function setTheme() {
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches || (window.matchMedia("(hover: hover)").matches && (site.today.getHours() < 8 || site.today.getHours() > 18));
@@ -150,7 +170,7 @@ async function formatCalendar() {
     for (let i = 0; i < day1; i++) {
       const span = document.createElement("span");
       span.className = "calendar-grid";
-      calElBody.appendChild(span);
+      calElBody.append(span);
     }
     for (let d = 1; d < days; d++) {
       const date = `${y}${(m + 1).toString().padStart(2, "0")}${d.toString().padStart(2, "0")}`;
@@ -163,7 +183,7 @@ async function formatCalendar() {
       if (date === today) {
         span.classList.add("calendar-today");
       }
-      calElBody.appendChild(span);
+      calElBody.append(span);
     }
     calElPrev.ariaDisabled = y <=      start.getFullYear() && m <=      start.getMonth();
     calElNext.ariaDisabled = y >= site.today.getFullYear() && m >= site.today.getMonth();
@@ -177,7 +197,7 @@ async function formatCalendar() {
   }
 
   initCal(year, month);
-  document.querySelector("article section").appendChild(calEl);
+  document.querySelector("article section").append(calEl);
 }
 
 function renderHTML(raw) {
@@ -201,18 +221,12 @@ function renderHTML(raw) {
         return d.reduce((text, deco) => {
           const [type, info] = deco;
           switch (type) {
-            case "a":
-              return `<a href="${info}" target="_blank" rel="noopener noreferrer nofollow">${text}</a>`;
-            case "b":
-              return `<strong>${text}</strong>`;
-            case "c":
-              return `<code>${text}</code>`;
-            case "s":
-              return `<del>${text}</del>`;
-            case "i":
-              return `<em>${text}</em>`;
-            default:
-              return text;
+            case "a": return `<a href="${info}" target="_blank" rel="noopener noreferrer nofollow">${text}</a>`;
+            case "b": return `<strong>${text}</strong>`;
+            case "c": return `<code>${text}</code>`;
+            case "s": return `<del>${text}</del>`;
+            case "i": return `<em>${text}</em>`;
+            default:  return text;
           }
         }, t);
       }).join("");
@@ -257,7 +271,7 @@ function renderHTML(raw) {
         }
         switch (type) {
           case "image":
-            html += `<figure onload><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')"></figure>`;
+            html += `<figure onload style="aspect-ratio: ${1 / block.format.block_aspect_ratio}"><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" ${imgEnd}</figure>`;
             break;
           case "text":
             html += `<p${lang}>${text}</p>`;
@@ -306,7 +320,6 @@ async function initPage() {
   setTheme();
 
   const data = await fetchData();
-
   const fragment = new DocumentFragment();
   if (site.data.list.length) {
     Object.entries(site.type).forEach(([type, slug]) => {
@@ -320,19 +333,50 @@ async function initPage() {
         span.dataset.name = type;
         span.textContent = data.type[type]?.length || data.list.length || 0;
 
-        link.appendChild(span);
-        item.appendChild(link);
-        fragment.appendChild(item);
+        link.append(span);
+        item.append(link);
+        fragment.append(item);
       }
     });
   } else {
-    fragment.append(Object.assign(document.createElement("div"), {innerHTML: "不知为何没有获取到数据 <span>(´ﾟдﾟ`)</span>"}));
+    fragment.append(Object.assign(document.createElement("div"), {
+      innerHTML: "不知为何没有获取到数据 <span>(´ﾟдﾟ`)</span>"
+    }));
   }
-  document.querySelector("header ul").appendChild(fragment);
+  document.querySelector("header ul").append(fragment);
+
+  const lightbox = document.getElementById("lightbox");
+  lightbox.addEventListener("click", (e) => {
+    const img = e.target.closest("img");
+    if (!img) {
+      document.body.classList.remove("lightbox");
+    } else if (img.classList.contains("zoomable")) {
+      img.classList.toggle("zoomed");
+    }
+  });
+
+  document.querySelector(".placeholder").addEventListener("click", () => {
+    document.body.classList.remove("side");
+  });
 
   document.body.addEventListener("click", (e) => {
+    const img = e.target.closest(".journal-content img");
+    if (img) {
+      const dpr = window.devicePixelRatio || 1;
+      const cln = img.cloneNode();
+      cln.style.setProperty("--mw", img.naturalWidth / dpr + "px");
+      cln.style.setProperty("--mh", img.naturalHeight / dpr + "px");
+      if (img.naturalWidth / dpr > window.innerWidth - 32 || img.naturalHeight / dpr > window.innerHeight - 32) {
+        cln.className = "zoomable";
+      }
+      lightbox.replaceChildren(cln);
+      document.body.classList.add("lightbox");
+      return;
+    }
+
     const a = e.target.closest("a");
-    if (a && a.getAttribute("href")?.startsWith("/")) {
+    if (!a) return;
+    if (a.getAttribute("href")?.startsWith("/")) {
       e.preventDefault();
       site.main.dataset.load = "true";
       document.body.classList.remove("side");
@@ -340,7 +384,7 @@ async function initPage() {
         document.title.endsWith("迷路啦！") ? history.replaceState(null, "", a.getAttribute("href")) : history.pushState(null, "", a.getAttribute("href"));
         loadPage();
       }, 200);
-    } else if (a && a.className === "reload") {
+    } else if (a.className === "reload") {
       a.ariaDisabled = "true";
       document.body.dataset.load = "true";
       localStorage.removeItem("data_timestamp");
@@ -357,13 +401,11 @@ async function initPage() {
           location.reload();
         }
       }, 200);
-    } else if (a && a.className === "menu") {
+    } else if (a.className === "menu") {
       document.body.classList.add("side");
     }
   });
-  document.querySelector(".placeholder").addEventListener("click", () => {
-    document.body.classList.remove("side");
-  });
+
   window.addEventListener("popstate", () => {
     loadPage();
   });
@@ -384,7 +426,7 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>俊俊的</p>
           <p>${site.title}</p>
-          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" /></figure>
+          <figure onload><img src="/logo.webp" ${imgEnd}</figure>
         </section>
       </article>
     `;
@@ -419,16 +461,21 @@ async function loadPage(path = location.pathname) {
           <article data-url="${path}" data-layout="album">
             <h2>${type} <span data-type="${slug}"></span></h2>
             <ul class="journal-list">
-              ${items.map((item) => `
-                <li>
-                  <figure onload>${item.Cover ? `<img src="${item.Cover[0].url.replace("https://www.notion.so", "https://webp.bot.nu")}" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" />` : ``}</figure>
+              ${items.map((item) => {
+                const img = item.Cover
+                  ? item.Cover[0].url.replace("www.notion.so", "webp.bot.nu")
+                  : slug === "game" ? "/log-game.jpg" : "";
+                return `<li>
+                  <figure>
+                    <img src="${img}" ${imgEnd}
+                  </figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>
                     <p class="journal-meta">${formatMeta(item)}</p>
                     <p class="journal-summary">${item.Summary || ""}</p>
                   </figcaption>
-                </li>
-              `).join("")}
+                </li>`;
+              }).join("")}
             </ul>
           </article>
         `;
@@ -492,7 +539,7 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>${site.title}</p>
           <p>404</p>
-          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');this.removeAttribute('onload')" /></figure>
+          <figure onload><img src="/logo.webp" ${imgEnd}</figure>
         </section>
       </article>
     `;
