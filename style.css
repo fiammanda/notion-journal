@@ -669,6 +669,9 @@ nav a[rel="next"] {
   }
 }
 
+section figure {
+  margin: 1rem 0;
+}
 section figure img {
   opacity: .8;
 }
