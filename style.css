@@ -844,12 +844,15 @@ section figure img:hover {
   cursor: pointer;
   z-index: 9;
   pointer-events: none;
+  user-select: none;
   transition: opacity .2s ease-in-out;
 }
 #lightbox img {
-  max-width: calc(100dvh - 3rem);
+  max-width: calc(100dvw - 3rem);
   max-height: calc(100dvh - 3rem);
   cursor: crosshair;
+  transition: .2s ease-in-out;
+  transition-property: max-width, max-height;
 }
 #lightbox img.zoomable {
   cursor: zoom-in;

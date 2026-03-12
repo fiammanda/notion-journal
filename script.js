@@ -362,7 +362,7 @@ async function initPage() {
   document.body.addEventListener("click", (e) => {
     const img = e.target.closest(".journal-content img");
     if (img) {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = (window.devicePixelRatio || 1) % 1 ? window.devicePixelRatio : 1;
       const cln = img.cloneNode();
       cln.style.setProperty("--mw", img.naturalWidth / dpr + "px");
       cln.style.setProperty("--mh", img.naturalHeight / dpr + "px");
