@@ -298,8 +298,6 @@ function renderHTML(raw) {
           case "divider":
             html += `<hr />`;
             break;
-          default:
-            break;
         }
         html += renderChildren();
       }
@@ -426,7 +424,7 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>俊俊的</p>
           <p>${site.title}</p>
-          <figure onload><img src="/logo.webp" ${imgEnd}</figure>
+          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');setTimeout(() => {this.removeAttribute('onload');}, 10)" /></figure>
         </section>
       </article>
     `;
