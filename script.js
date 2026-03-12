@@ -27,26 +27,6 @@ const site = {
   main: document.querySelector("main")
 };
 
-const imgEnd = `loading="lazy" onload="this.parentNode.removeAttribute('onload');setTimeout(() => {this.removeAttribute('onload');}, 10)" />
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-      <path stroke-dasharray="66" d="M3 14v-9h18v14h-18v-5">
-        <animate fill="freeze" attributeName="stroke-dashoffset" dur=".8s" values="66;0"/>
-      </path>
-      <path stroke-dasharray="26" stroke-dashoffset="26" d="M3 16l4 -3l3 2l6 -5l5 4">
-        <animate fill="freeze" attributeName="stroke-dashoffset" begin=".8s" dur=".5s" to="0" />
-      </path>
-    </g>
-    <g fill="currentColor">
-      <circle cx="7.5" cy="9.5" r="1.5" opacity="0">
-        <animate fill="freeze" attributeName="opacity" begin="1.3s" dur=".25s" to="1" />
-      </circle>
-      <path fill-opacity="0" d="M3 16l4 -3l3 2l6 -5l5 4v5h-18Z">
-        <animate fill="freeze" attributeName="fill-opacity" begin="1.5s" dur=".25s" to="1" />
-      </path>
-    </g>
-  </svg>`;
-
 function setTheme() {
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches || (window.matchMedia("(hover: hover)").matches && (site.today.getHours() < 8 || site.today.getHours() > 18));
   if (localStorage.getItem("theme")) {
@@ -208,7 +188,7 @@ function renderHTML(raw) {
       const code = ch.codePointAt(0);
       if (code > 0x1F000) {
         const hex = code.toString(16).toUpperCase();
-        return `<img class="emoji" src="https://cdn.jsdelivr.net/npm/@svgmoji/blob@2.0.0/svg/${hex}.svg" alt="${ch}" />`;
+        return `<img class="emoji" alt="${ch}" loading="lazy" src="https://fastly.jsdelivr.net/npm/@svgmoji/blob@2.0.0/svg/${hex}.svg" onload="requestAnimationFrame(()=>{this.removeAttribute('onload');this.removeAttribute('onerror')})" onerror="this.replaceWith(document.createTextNode(this.alt))" />`;
       }
       return ch;
     }).join("");
@@ -271,7 +251,9 @@ function renderHTML(raw) {
         }
         switch (type) {
           case "image":
-            html += `<figure onload style="aspect-ratio: ${1 / block.format.block_aspect_ratio}"><img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" ${imgEnd}</figure>`;
+            html += `<figure data-load style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
+              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+            </figure>`;
             break;
           case "text":
             html += `<p${lang}>${text}</p>`;
@@ -424,7 +406,9 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>俊俊的</p>
           <p>${site.title}</p>
-          <figure onload><img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('onload');setTimeout(() => {this.removeAttribute('onload');}, 10)" /></figure>
+          <figure data-load>
+            <img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+          </figure>
         </section>
       </article>
     `;
@@ -464,8 +448,8 @@ async function loadPage(path = location.pathname) {
                   ? item.Cover[0].url.replace("www.notion.so", "webp.bot.nu")
                   : slug === "game" ? "/log-game.jpg" : "";
                 return `<li>
-                  <figure>
-                    <img src="${img}" ${imgEnd}
+                  <figure data-load>
+                    <img src="${img}" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
                   </figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>
@@ -537,7 +521,9 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>${site.title}</p>
           <p>404</p>
-          <figure onload><img src="/logo.webp" ${imgEnd}</figure>
+          <figure data-load>
+            <img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+          </figure>
         </section>
       </article>
     `;

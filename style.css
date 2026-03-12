@@ -54,13 +54,6 @@ code {
   transition: .2s ease-in;
   transition-property: background;
 }
-img {
-  max-width: 100%;
-  object-fit: cover;
-  border-radius: .25rem;
-  transition: .2s ease-in;
-  transition-property: opacity;
-}
 figure {
   position: relative;
   display: flex;
@@ -71,35 +64,28 @@ figure::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--color-neutral-095);
+  background: linear-gradient(90deg, var(--color-neutral-095) 0%, var(--color-neutral-090) 50%, var(--color-neutral-095) 100%);
+  background-size: 200% 100%;
   border-radius: .25rem;
   opacity: 0;
   z-index: -1;
   transition: .2s ease-in;
   transition-property: opacity;
+  animation: placeholder 3s linear infinite;
 }
-figure img {
-  opacity: .7;
+figure[data-load]::before {
+  opacity: .75;
 }
-figure svg {
-  order: -1;
-  position: absolute;
+img {
   max-width: 100%;
-  max-height: 100%;
-  opacity: 0;
-  z-index: -1;
-  pointer-events: none;
+  object-fit: cover;
+  border-radius: .25rem;
   transition: .2s ease-in;
   transition-property: opacity;
 }
-figure[onload]::before {
-  opacity: 1;
-}
-figure[onload] svg {
-  opacity: 1;
-}
-figure[onload] img {
+img[onload] {
   opacity: 0;
+  pointer-events: none;
 }
 hr {
   display: flex;
@@ -593,6 +579,9 @@ article a {
   padding: 0;
   list-style: none;
 }
+.journal-list img {
+  opacity: .7;
+}
 .journal-list li:hover img {
   opacity: 1;
 }
@@ -640,7 +629,7 @@ p.journal-summary {
 div.journal-summary {
   margin: 1rem 0;
 }
-.journal-content img {
+.journal-content figure img {
   cursor: zoom-in;
 }
 
@@ -723,6 +712,9 @@ section figure img:hover {
   height: 8rem;
   min-height: 8rem;
   opacity: 1;
+}
+[data-url="/"] figure::before {
+  content: none;
 }
 
 [data-layout="album"] li {
@@ -877,7 +869,12 @@ section figure img:hover {
   margin-inline: .25em;
   width: 1.25em;
   height: 1.25em;
-  vertical-align: -10%;
+  vertical-align: text-bottom;
+}
+
+@keyframes placeholder {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
 
 :root {
@@ -915,7 +912,7 @@ section figure img:hover {
   --color-secondary-040: hsl(var(--ch), 15%, var(--cl040));
   --color-secondary-060: hsl(var(--ch), 15%, var(--cl060));
   --color-secondary-080: hsl(var(--ch), calc(15% + 5% * var(--csm)), var(--cl080));
-  --font-family: "Inter", -apple-system, "MiSans", "HarmonyOS Sans", "Source Han Sans SC", "Noto Sans CJK SC", "思源黑体", "Noto Sans SC", sans-serif;
+  --font-family: "Punctuation", "Inter", -apple-system, "MiSans", "HarmonyOS Sans", "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC", "思源黑体", sans-serif;
   --font-feature: "ss01", "cv06", "cv11";
 }
 .dark {
@@ -935,3 +932,17 @@ section figure img:hover {
   --cl100: 10%;
 }
 
+@font-face {
+  font-family: "Punctuation";
+  src:
+    local("MiSans"), local("HarmonyOS Sans"), local("Source Han Sans SC"), local("Noto Sans CJK SC"), local("Noto Sans SC"), local("思源黑体"),
+    url("https://fonts.gstatic.com/s/notosanssc/v40/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FrYtHbQ.woff2") format("woff2");
+  unicode-range: U+2018-201D;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: local("Inter Variable"), local("InterVariable"), url("https://rsms.me/inter/font-files/InterVariable.woff2") format("woff2");
+}
