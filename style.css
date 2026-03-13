@@ -173,7 +173,7 @@ main {
   margin: 0 auto;
   max-width: 40rem;
   min-height: 100dvh;
-  transition: .1s ease-in;
+  transition: .2s ease-in;
   transition-property: opacity;
 }
 article {
@@ -202,8 +202,6 @@ nav {
   width: 1em;
   font: 1em/calc(1em + 1px) "Material Symbols Rounded";
   vertical-align: -15%;
-  transition: .2s ease-in-out;
-  transition-property: color;
 }
 [data-icon="star-fill"]::before {
   content: "star";
@@ -261,7 +259,10 @@ header [data-icon] span {
 header [data-icon]::before {
   width: 1.125rem;
   font-size: 1.125rem;
+  color: var(--color-neutral-010);
   vertical-align: -17.5%;
+  transition: .2s ease-in-out;
+  transition-property: color;
 }
 header .font-num::before {
   content: attr(data-name);
@@ -367,8 +368,10 @@ header p a {
   }
 }
 @media (max-width: 50rem) {
-  .side, .side body {
+  .side {
+    position: fixed;
     overflow: hidden;
+    touch-action: none;
   }
   header {
     top: 5rem;
@@ -645,8 +648,12 @@ nav a[rel="next"] {
 }
 .journal-meta [data-icon]::before {
   padding: 0 .0625em;
-  color: var(--color-neutral-040);
   vertical-align: -10%;
+}
+.journal-meta [data-icon="label"]::before {
+  font-size: .9375rem;
+  font-weight: 450;
+  vertical-align: -15%;
 }
 .journal-meta .journal-rate {
   margin: 0 .75rem 0 -.1875rem;
@@ -792,7 +799,7 @@ div.journal-summary {
   z-index: 9;
   pointer-events: none;
   user-select: none;
-  transition: opacity .2s ease-in-out;
+  transition: opacity .3s ease-in-out;
 }
 #lightbox img {
   max-width: calc(100dvw - 3rem);
@@ -809,8 +816,10 @@ div.journal-summary {
   max-height: var(--mh, unset);
   cursor: zoom-out;
 }
-.lightbox, .lightbox body {
+.lightbox {
+  position: fixed;
   overflow: hidden;
+  touch-action: none;
 }
 .lightbox #lightbox {
   opacity: 1;

@@ -30,10 +30,14 @@ const site = {
     "还想": "star-fill",
     "凑合": "star_half",
     "放弃": "star",
+    "tag": "label",
+    "author": "ink_pen"
   },
   data: JSON.parse(localStorage.getItem("data")) || null,
   main: document.querySelector("main")
 };
+
+//Object.values(site.icon).sort().join();
 
 function setTheme() {
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches || (window.matchMedia("(hover: hover)").matches && (site.today.getHours() < 8 || site.today.getHours() > 18));
@@ -120,10 +124,10 @@ function formatMeta(page) {
     meta += `<span class="journal-rate" data-icon="${site.icon[page.Rate]}">${page.Rate}</span>`;
   }
   if (page.Tags) {
-    meta += `<span data-icon="label"></span>` + page.Tags.map((tag) => `<span class="journal-tag">${tag}</span>`).join(" ");
+    meta += `<span data-icon="${site.icon["tag"]}"></span>` + page.Tags.map((tag) => `<span class="journal-tag">${tag}</span>`).join(" ");
   }
   if (page.Info && page.Type === "读了") {
-    meta += `<span data-icon="ink_pen">${page.Info}</span>`;
+    meta += `<span data-icon="${site.icon["author"]}">${page.Info}</span>`;
   }
   return meta;
 }
@@ -260,7 +264,7 @@ function renderHTML(raw) {
         switch (type) {
           case "image":
             html += `<figure style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
-              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnV1dQ==,width__0.08,height__0.03,offset_x__0.88,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnU,width__0.06,height__0.03,offset_x__0.9,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
             </figure>`;
             break;
           case "text":
@@ -337,14 +341,20 @@ async function initPage() {
   lightbox.addEventListener("click", (e) => {
     const img = e.target.closest("img");
     if (!img) {
-      document.documentElement.classList.remove("lightbox");
+      const y = -parseFloat(document.body.style.top || "0");
+      document.body.removeAttribute("class");
+      document.body.removeAttribute("style");
+      window.scrollTo(0, y);
     } else if (img.classList.contains("zoomable")) {
       img.classList.toggle("zoomed");
     }
   });
 
   document.querySelector(".placeholder").addEventListener("click", () => {
-    document.documentElement.classList.remove("side");
+    const y = -parseFloat(document.body.style.top || "0");
+    document.body.removeAttribute("class");
+    document.body.removeAttribute("style");
+    window.scrollTo(0, y);
   });
 
   document.body.addEventListener("click", (e) => {
@@ -358,7 +368,11 @@ async function initPage() {
         clone.className = "zoomable";
       }
       lightbox.replaceChildren(clone);
-      clone.addEventListener("load", () => document.documentElement.classList.add("lightbox"));
+      clone.addEventListener("load", () => {
+        const y = window.scrollY;
+        document.body.classList.add("lightbox");
+        document.body.style.top = `-${y}px`;
+      });
       return;
     }
 
@@ -367,9 +381,10 @@ async function initPage() {
     if (a.getAttribute("href")?.startsWith("/")) {
       e.preventDefault();
       site.main.className = "load";
-      document.documentElement.classList.remove("side");
       setTimeout(() => {
         document.title.endsWith("迷路啦！") ? history.replaceState(null, "", a.getAttribute("href")) : history.pushState(null, "", a.getAttribute("href"));
+        document.body.removeAttribute("class");
+        document.body.removeAttribute("style");
         loadPage();
       }, 200);
     } else if (a.className === "reload") {
@@ -390,7 +405,9 @@ async function initPage() {
         }
       }, 200);
     } else if (a.className === "menu") {
-      document.documentElement.classList.add("side");
+      const y = window.scrollY;
+      document.body.classList.add("side");
+      document.body.style.top = `-${y}px`;
     }
   });
 
