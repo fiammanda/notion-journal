@@ -17,7 +17,15 @@ const site = {
     "看了": "show",
     "玩了": "game",
   },
-  rate: {
+  icon: {
+    "记了": "dataset",
+    "过了": "local_cafe",
+    "尝了": "local_bar",
+    "去了": "map",
+    "扫了": "article",
+    "读了": "shelves",
+    "看了": "videocam",
+    "玩了": "extension",
     "追读": "star-fill",
     "还想": "star-fill",
     "凑合": "star_half",
@@ -109,13 +117,13 @@ function formatDate(date) {
 function formatMeta(page) {
   let meta = "";
   if (page.Rate) {
-    meta += `<span class="journal-rate" data-icon="${site.rate[page.Rate]}">${page.Rate}</span>`;
+    meta += `<span class="journal-rate" data-icon="${site.icon[page.Rate]}">${page.Rate}</span>`;
   }
   if (page.Tags) {
-    meta += `<span data-icon="info"></span>` + page.Tags.map((tag) => `<span class="journal-tag">${tag}</span>`).join(" ");
+    meta += `<span data-icon="label"></span>` + page.Tags.map((tag) => `<span class="journal-tag">${tag}</span>`).join(" ");
   }
   if (page.Info && page.Type === "读了") {
-    meta += `<span data-icon="info">${page.Info}</span>`;
+    meta += `<span data-icon="ink_pen">${page.Info}</span>`;
   }
   return meta;
 }
@@ -251,8 +259,8 @@ function renderHTML(raw) {
         }
         switch (type) {
           case "image":
-            html += `<figure data-load style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
-              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+            html += `<figure style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
+              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnV1dQ==,width__0.08,height__0.03,offset_x__0.88,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
             </figure>`;
             break;
           case "text":
@@ -307,7 +315,7 @@ async function initPage() {
         const item = document.createElement("li");
         const link = document.createElement("a");
         link.href = slug === "log" ? `/log/` : `/log/${slug}/`;
-        link.dataset.type = slug;
+        link.dataset.icon = site.icon[type];
         const span = document.createElement("span");
         span.className = "font-num";
         span.dataset.name = type;
@@ -329,28 +337,28 @@ async function initPage() {
   lightbox.addEventListener("click", (e) => {
     const img = e.target.closest("img");
     if (!img) {
-      document.body.classList.remove("lightbox");
+      document.documentElement.classList.remove("lightbox");
     } else if (img.classList.contains("zoomable")) {
       img.classList.toggle("zoomed");
     }
   });
 
   document.querySelector(".placeholder").addEventListener("click", () => {
-    document.body.classList.remove("side");
+    document.documentElement.classList.remove("side");
   });
 
   document.body.addEventListener("click", (e) => {
     const img = e.target.closest(".journal-content img");
     if (img) {
       const dpr = (window.devicePixelRatio || 1) % 1 ? window.devicePixelRatio : 1;
-      const cln = img.cloneNode();
-      cln.style.setProperty("--mw", img.naturalWidth / dpr + "px");
-      cln.style.setProperty("--mh", img.naturalHeight / dpr + "px");
+      const clone = img.cloneNode();
+      clone.style.setProperty("--mw", img.naturalWidth / dpr + "px");
+      clone.style.setProperty("--mh", img.naturalHeight / dpr + "px");
       if (img.naturalWidth / dpr > window.innerWidth - 32 || img.naturalHeight / dpr > window.innerHeight - 32) {
-        cln.className = "zoomable";
+        clone.className = "zoomable";
       }
-      lightbox.replaceChildren(cln);
-      document.body.classList.add("lightbox");
+      lightbox.replaceChildren(clone);
+      clone.addEventListener("load", () => document.documentElement.classList.add("lightbox"));
       return;
     }
 
@@ -358,15 +366,15 @@ async function initPage() {
     if (!a) return;
     if (a.getAttribute("href")?.startsWith("/")) {
       e.preventDefault();
-      site.main.dataset.load = "true";
-      document.body.classList.remove("side");
+      site.main.className = "load";
+      document.documentElement.classList.remove("side");
       setTimeout(() => {
         document.title.endsWith("迷路啦！") ? history.replaceState(null, "", a.getAttribute("href")) : history.pushState(null, "", a.getAttribute("href"));
         loadPage();
       }, 200);
     } else if (a.className === "reload") {
       a.ariaDisabled = "true";
-      document.body.dataset.load = "true";
+      document.body.className = "load";
       localStorage.removeItem("data_timestamp");
       const path = location.pathname.slice(5, -1);
       if (data.list.includes(path)) {
@@ -382,7 +390,7 @@ async function initPage() {
         }
       }, 200);
     } else if (a.className === "menu") {
-      document.body.classList.add("side");
+      document.documentElement.classList.add("side");
     }
   });
 
@@ -406,8 +414,8 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>俊俊的</p>
           <p>${site.title}</p>
-          <figure data-load>
-            <img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+          <figure>
+            <img src="/logo.webp" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
           </figure>
         </section>
       </article>
@@ -417,7 +425,7 @@ async function loadPage(path = location.pathname) {
     title += ` - LOG`;
     html = `
       <article data-url="${path}">
-        <h2>记了 <span data-type="log"></span></h2>
+        <h2>记了 <span data-icon="${site.icon["记了"]}"></span></h2>
         <ul class="journal-list">
           ${data.list.map((date) => `
             <li>
@@ -425,7 +433,7 @@ async function loadPage(path = location.pathname) {
                 <span class="font-num">${formatDate(date)}</span>
               </a>
               ${[...new Set(data.date[date].map((index) => data.raw[index].Type))].map((type) => 
-                `<a href="/log/${site.type[type]}/" data-type="${site.type[type]}"></a>`
+                `<a href="/log/${site.type[type]}/" data-icon="${site.icon[type]}"></a>`
               ).join("")}
             </li>
           `).join("")}
@@ -441,15 +449,15 @@ async function loadPage(path = location.pathname) {
       if (["novel", "book", "show", "game"].includes(slug)) {
         html = `
           <article data-url="${path}" data-layout="album">
-            <h2>${type} <span data-type="${slug}"></span></h2>
+            <h2>${type} <span data-icon="${site.icon[type]}"></span></h2>
             <ul class="journal-list">
               ${items.map((item) => {
                 const img = item.Cover
                   ? item.Cover[0].url.replace("www.notion.so", "webp.bot.nu")
                   : slug === "game" ? "/log-game.jpg" : "";
                 return `<li>
-                  <figure data-load>
-                    <img src="${img}" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+                  <figure>
+                    <img src="${img}" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
                   </figure>
                   <figcaption>
                     <a href="/log/${item.Date.replace(/-/g, "")}/">${item.Name}</a>
@@ -464,7 +472,7 @@ async function loadPage(path = location.pathname) {
       } else {
         html = `
           <article data-url="${path}">
-            <h2>${type} <span data-type="${slug}"></span></h2>
+            <h2>${type} <span data-icon="${site.icon[type]}"></span></h2>
             <ul class="journal-list">
               ${items.map((item) => `
                 <li>
@@ -500,7 +508,7 @@ async function loadPage(path = location.pathname) {
             <section>
               <h3>
                 ${page.Name}
-                <a href="/log/${site.type[page.Type]}/" data-type="${site.type[page.Type]}"></a>
+                <a href="/log/${site.type[page.Type]}/" data-icon="${site.icon[page.Type]}"></a>
               </h3>
               ${page.Tags || page.Rate ? `<div class="journal-meta">${formatMeta(page)}</div>` : ""}
               ${page.Summary ? `<div class="journal-summary">${page.Summary}</div>` : ""}
@@ -521,8 +529,8 @@ async function loadPage(path = location.pathname) {
         <section>
           <p>${site.title}</p>
           <p>404</p>
-          <figure data-load>
-            <img src="/logo.webp" loading="lazy" onload="this.parentNode.removeAttribute('data-load');requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+          <figure>
+            <img src="/logo.webp" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
           </figure>
         </section>
       </article>
@@ -531,8 +539,8 @@ async function loadPage(path = location.pathname) {
   }
 
   site.main.innerHTML = html;
-  site.main.removeAttribute("data-load");
-  document.body.removeAttribute("data-load");
+  site.main.removeAttribute("class");
+  document.body.removeAttribute("class");
   document.title = title;
   document.querySelector(`[href="${path}"]`)?.parentNode.setAttribute("aria-disabled", "true");
 }

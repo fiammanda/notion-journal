@@ -71,9 +71,9 @@ figure::before {
   z-index: -1;
   transition: .2s ease-in;
   transition-property: opacity;
-  animation: placeholder 3s linear infinite;
+  animation: load 3s linear infinite;
 }
-figure[data-load]::before {
+figure:has([onload])::before {
   opacity: .75;
 }
 img {
@@ -84,7 +84,7 @@ img {
   transition-property: opacity;
 }
 img[onload] {
-  opacity: 0;
+  opacity: 0 !important;
   pointer-events: none;
 }
 hr {
@@ -117,7 +117,6 @@ h4 {
   font-size: 1rem;
   font-weight: 500;
 }
-
 p {
   margin: 1rem 0;
   text-align: justify;
@@ -134,7 +133,7 @@ blockquote {
   transition-property: color, border-color;
 }
 ul {
-  margin: .1rem 0;
+  margin: 1rem 0;
   padding: 0 0 0 1rem;
   text-align: justify;
   list-style-type: "- ";
@@ -154,8 +153,10 @@ li::marker {
 #site {
   margin: 0 auto;
   max-width: 80rem;
-  transition: .2s ease-in;
-  transition-property: opacity;
+}
+.load {
+  opacity: 0;
+  pointer-events: none;
 }
 header, main {
   padding: clamp(1.5rem, 4vw, 4rem);
@@ -172,7 +173,7 @@ main {
   margin: 0 auto;
   max-width: 40rem;
   min-height: 100dvh;
-  transition: .2s ease-in;
+  transition: .1s ease-in;
   transition-property: opacity;
 }
 article {
@@ -190,65 +191,19 @@ nav {
   transition-property: border-color;
 }
 
-.font-num {
-  font-feature-settings: "tnum", var(--font-feature);
-  letter-spacing: -1px;
-}
-[data-load="true"] {
-  opacity: 0;
-  pointer-events: none;
-}
-
 [lang="en"] {
   text-align: left;
   text-wrap: pretty;
-}
-
-[data-type]::before {
-  display: inline-flex;
-  width: 1rem;
-  font: 1rem/calc(1rem + 1px) "Material Symbols Rounded";
-  text-align: center;
-  vertical-align: -15%;
-}
-[data-type="log"]::before {
-  content: "dataset";
-}
-[data-type="life"]::before {
-  content: "local_cafe";
-}
-[data-type="food"]::before {
-  content: "local_bar";
-}
-[data-type="event"]::before {
-  content: "map";
-}
-[data-type="novel"]::before {
-  content: "article";
-}
-[data-type="book"]::before {
-  content: "shelves";
-}
-[data-type="show"]::before {
-  content: "videocam";
-}
-[data-type="game"]::before {
-  content: "extension";
-}
-[data-type="creation"]::before {
-  content: "palette";
-}
-[data-type="tech"]::before {
-  content: "code_blocks";
 }
 
 [data-icon]::before {
   content: attr(data-icon);
   display: inline-block;
   width: 1em;
-  padding: 0 .0625em;
   font: 1em/calc(1em + 1px) "Material Symbols Rounded";
-  vertical-align: -12%;
+  vertical-align: -15%;
+  transition: .2s ease-in-out;
+  transition-property: color;
 }
 [data-icon="star-fill"]::before {
   content: "star";
@@ -267,13 +222,22 @@ header h1 {
 header h1 span {
   display: block;
   color: var(--color-neutral-010);
-  transition: color .2s ease-in, padding .2s ease-in-out;
+  transition: color .2s ease-in;
 }
-header h1 span:first-child {
+header h1 span:nth-child(1) {
   color: var(--color-primary-050);
 }
-header h1 span:last-child {
+header h1 span:nth-child(2) {
+  transition: color .2s ease-in, padding .2s ease-in-out;
+}
+header h1:hover span:nth-child(2) {
   transition: color .2s ease-in, padding .4s ease-in-out;
+}
+header h1 span:nth-child(3) {
+  transition: color .2s ease-in, padding .4s ease-in-out;
+}
+header h1:hover span:nth-child(3) {
+  transition: color .2s ease-in, padding .2s ease-in-out;
 }
 header ul {
   margin: 3rem 0 auto;
@@ -289,16 +253,15 @@ header [aria-disabled] a::before {
   transition: .2s ease-in;
   transition-property: color;
 }
-header [data-type] span {
+header [data-icon] span {
   color: var(--color-neutral-050);
   transition: .2s ease-in;
   transition-property: color;
 }
-header [data-type]::before {
+header [data-icon]::before {
   width: 1.125rem;
   font-size: 1.125rem;
-  line-height: calc(1.125rem + 1px);
-  vertical-align: -15%;
+  vertical-align: -17.5%;
 }
 header .font-num::before {
   content: attr(data-name);
@@ -361,10 +324,6 @@ header p a {
 .reload[aria-disabled] {
   animation: spin .2s ease-in-out;
 }
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 
 @media (hover: hover) {
   header h1 a:hover span:nth-child(2) {
@@ -373,14 +332,10 @@ header p a {
   header h1 a:hover span:nth-child(3) {
     padding: 0 0 0 1rem;
   }
-  header [data-type]::before {
-    transition: .2s ease-in-out;
-    transition-property: color;
-  }
-  header [data-type]:hover::before {
+  header [data-icon]:hover::before {
     color: var(--color-primary-050);
   }
-  header [data-type]:hover .font-num::before {
+  header [data-icon]:hover .font-num::before {
     padding: 0 0 0 .5rem;
     width: 2.25rem;
     color: var(--color-neutral-010);
@@ -412,7 +367,7 @@ header p a {
   }
 }
 @media (max-width: 50rem) {
-  .side {
+  .side, .side body {
     overflow: hidden;
   }
   header {
@@ -563,131 +518,6 @@ header p a {
   }
 }
 
-article h2::before {
-  content: "紧急飞毯";
-  display: block;
-  margin: 0 0 .125rem;
-  font-weight: 500;
-}
-article h3 [data-type] {
-  margin: 0 0 0 .25rem;
-}
-article a {
-  color: var(--color-primary-050);
-}
-.journal-list {
-  padding: 0;
-  list-style: none;
-}
-.journal-list img {
-  opacity: .7;
-}
-.journal-list li:hover img {
-  opacity: 1;
-}
-.journal-list .font-num {
-  margin: 0 .5rem 0 0;
-}
-.journal-list a:only-child {
-  display: flex;
-}
-.journal-title {
-  color: var(--color-neutral-010);
-  transition: .2s ease-in;
-  transition-property: color;
-}
-.journal-meta {
-  margin: -1.25rem 0 1.5rem 0;
-  font-size: .875rem;
-  color: var(--color-neutral-050);
-  transition: .2s ease-in;
-  transition-property: color;
-}
-.journal-meta [data-icon] {
-  margin: 0 .125rem 0 -.125rem;
-}
-.journal-meta [data-icon]::before {
-  color: var(--color-neutral-040);
-  line-height: calc(.875rem + 1px);
-  transition: .2s ease-in;
-  transition-property: color;
-}
-.journal-meta .journal-rate {
-  margin: 0 .75rem 0 -.1875rem;
-}
-.journal-meta .journal-rate::before {
-  font-size: 1.0625rem;
-  line-height: calc(1.0625rem + 1px);
-  vertical-align: -18%;
-}
-.journal-summary:empty {
-  display: none;
-}
-p.journal-summary {
-  font-size: .875rem;
-}
-div.journal-summary {
-  margin: 1rem 0;
-}
-.journal-content figure img {
-  cursor: zoom-in;
-}
-
-nav a:empty {
-  visibility: hidden;
-}
-nav a::before {
-  content: attr(rel);
-  display: block;
-  font-weight: 500;
-  font-variant: all-petite-caps;
-  color: var(--color-neutral-060);
-  transition: .2s ease-in;
-  transition-property: color;
-}
-nav a[rel="next"] {
-  text-align: right;
-}
-
-@media (hover: hover) {
-  article a:hover {
-    color: var(--color-neutral-010);
-  }
-  nav a:hover::before {
-    color: var(--color-primary-060);
-  }
-}
-
-section figure {
-  margin: 1rem 0;
-}
-section figure img {
-  opacity: .8;
-}
-section figure img:hover {
-  opacity: 1;
-}
-.task {
-  list-style-type: none;
-}
-.task::before {
-  content: "check_box_outline_blank";
-  display: inline-block;
-  margin: 0 0 0 -1.0625rem;
-  width: 1.0625rem;
-  font: 1rem/calc(1rem + 1px) "Material Symbols Rounded";
-  font-variation-settings: "FILL" 1;
-  vertical-align: -13%;
-}
-.task-checked {
-  color: var(--color-neutral-050);
-  transition: .2s ease-in;
-  transition-property: color;
-}
-.task-checked::before {
-  content: "check_box";
-}
-
 [data-url="/"] {
   padding: 2rem 0 0;
   display: flex;
@@ -743,6 +573,128 @@ section figure img:hover {
 }
 [data-layout="album"] li .journal-meta {
   margin: 0 0 1rem 0;
+}
+
+article h2::before {
+  content: "紧急飞毯";
+  display: block;
+  margin: 0 0 .125rem;
+  font-weight: 500;
+}
+article h3 [data-type] {
+  margin: 0 0 0 .25rem;
+}
+article a {
+  color: var(--color-primary-050);
+}
+nav a:empty {
+  visibility: hidden;
+}
+nav a::before {
+  content: attr(rel);
+  display: block;
+  font-weight: 500;
+  font-variant: all-petite-caps;
+  color: var(--color-neutral-060);
+  transition: .2s ease-in;
+  transition-property: color;
+}
+nav a[rel="next"] {
+  text-align: right;
+}
+
+@media (hover: hover) {
+  article a:hover {
+    color: var(--color-neutral-010);
+  }
+  nav a:hover::before {
+    color: var(--color-primary-060);
+  }
+}
+
+.journal-list {
+  padding: 0;
+  list-style: none;
+}
+.journal-list img {
+  opacity: .7;
+}
+.journal-list li:hover img {
+  opacity: 1;
+}
+.journal-list .font-num {
+  margin: 0 .5rem 0 0;
+}
+.journal-list a:only-child {
+  display: flex;
+}
+.journal-title {
+  color: var(--color-neutral-010);
+  transition: .2s ease-in;
+  transition-property: color;
+}
+.journal-meta {
+  margin: -1.25rem 0 1.5rem 0;
+  font-size: .875rem;
+  color: var(--color-neutral-050);
+  transition: .2s ease-in;
+  transition-property: color;
+}
+.journal-meta [data-icon] {
+  margin: 0 .125rem 0 -.125rem;
+}
+.journal-meta [data-icon]::before {
+  padding: 0 .0625em;
+  color: var(--color-neutral-040);
+  vertical-align: -10%;
+}
+.journal-meta .journal-rate {
+  margin: 0 .75rem 0 -.1875rem;
+}
+.journal-meta .journal-rate::before {
+  font-size: 1.0625rem;
+  line-height: calc(1.0625rem + 1px);
+  vertical-align: -18%;
+}
+.journal-summary:empty {
+  display: none;
+}
+p.journal-summary {
+  font-size: .875rem;
+}
+div.journal-summary {
+  margin: 1rem 0;
+}
+
+.journal-content figure {
+  margin: 1.25rem 0;
+}
+.journal-content figure img {
+  opacity: .80;
+  cursor: zoom-in;
+}
+.journal-content figure img:hover {
+  opacity: 1;
+}
+.task {
+  list-style-type: none;
+}
+.task::before {
+  content: "check_box_outline_blank";
+  display: inline-block;
+  margin: 0 0 0 -1.0625rem;
+  width: 1.0625rem;
+  font: 1rem/calc(1rem + 1px) "Material Symbols Rounded";
+  font-variation-settings: "FILL" 1;
+  vertical-align: -13%;
+}
+.task-checked {
+  color: var(--color-neutral-050);
+  transition: .2s ease-in;
+  transition-property: color;
+}
+.task-checked::before {
+  content: "check_box";
 }
 
 .calendar {
@@ -857,12 +809,17 @@ section figure img:hover {
   max-height: var(--mh, unset);
   cursor: zoom-out;
 }
-.lightbox {
+.lightbox, .lightbox body {
   overflow: hidden;
 }
 .lightbox #lightbox {
   opacity: 1;
   pointer-events: all;
+}
+
+.font-num {
+  font-feature-settings: "tnum", var(--font-feature);
+  letter-spacing: -1px;
 }
 
 .emoji {
@@ -872,9 +829,13 @@ section figure img:hover {
   vertical-align: text-bottom;
 }
 
-@keyframes placeholder {
+@keyframes load {
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 :root {
