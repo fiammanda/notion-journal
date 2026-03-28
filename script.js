@@ -200,7 +200,7 @@ function renderHTML(raw) {
       const code = ch.codePointAt(0);
       if (code > 0x1F000) {
         const hex = code.toString(16).toUpperCase();
-        return `<img class="emoji" alt="${ch}" loading="lazy" src="https://fastly.jsdelivr.net/npm/@svgmoji/blob@2.0.0/svg/${hex}.svg" onload="requestAnimationFrame(()=>{this.removeAttribute('onload');this.removeAttribute('onerror')})" onerror="this.replaceWith(document.createTextNode(this.alt))" />`;
+        return `<img class="emoji" alt="${ch}" loading="lazy" draggable="false" src="https://fastly.jsdelivr.net/npm/@svgmoji/blob@2.0.0/svg/${hex}.svg" onload="requestAnimationFrame(()=>{this.removeAttribute('onload');this.removeAttribute('onerror')})" onerror="this.replaceWith(document.createTextNode(this.alt))" />`;
       }
       return ch;
     }).join("");
@@ -341,20 +341,14 @@ async function initPage() {
   lightbox.addEventListener("click", (e) => {
     const img = e.target.closest("img");
     if (!img) {
-      const y = -parseFloat(document.body.style.top || "0");
       document.body.removeAttribute("class");
-      document.body.removeAttribute("style");
-      window.scrollTo(0, y);
     } else if (img.classList.contains("zoomable")) {
-      img.classList.toggle("zoomed");
+      lightbox.classList.toggle("zoom");
     }
   });
 
   document.querySelector(".placeholder").addEventListener("click", () => {
-    const y = -parseFloat(document.body.style.top || "0");
     document.body.removeAttribute("class");
-    document.body.removeAttribute("style");
-    window.scrollTo(0, y);
   });
 
   document.body.addEventListener("click", (e) => {
@@ -369,9 +363,7 @@ async function initPage() {
       }
       lightbox.replaceChildren(clone);
       clone.addEventListener("load", () => {
-        const y = window.scrollY;
         document.body.classList.add("lightbox");
-        document.body.style.top = `-${y}px`;
       });
       return;
     }
@@ -405,9 +397,7 @@ async function initPage() {
         }
       }, 200);
     } else if (a.className === "menu") {
-      const y = window.scrollY;
       document.body.classList.add("side");
-      document.body.style.top = `-${y}px`;
     }
   });
 
