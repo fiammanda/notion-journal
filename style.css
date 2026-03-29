@@ -27,7 +27,7 @@ body {
   font-feature-settings: var(--font-feature);
   color: var(--color-neutral-010);
   background: var(--color-neutral-100);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color, background, opacity;
 }
 
@@ -35,7 +35,7 @@ a {
   color: var(--color-neutral-010);
   text-decoration: none;
   cursor: pointer;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color, background;
 }
 em {
@@ -51,7 +51,7 @@ code {
   word-break: break-all;
   background: var(--color-primary-095);
   border-radius: .125rem;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: background;
 }
 figure {
@@ -69,7 +69,7 @@ figure::before {
   border-radius: .25rem;
   opacity: 0;
   z-index: -1;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: opacity;
   animation: load 3s linear infinite;
 }
@@ -80,7 +80,7 @@ img {
   max-width: 100%;
   object-fit: cover;
   border-radius: .25rem;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: opacity;
 }
 img[onload] {
@@ -129,7 +129,7 @@ blockquote {
   color: var(--color-secondary-040);
   border-top: 1px solid var(--color-secondary-060);
   border-bottom: 1px solid var(--color-secondary-060);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color, border-color;
 }
 ul {
@@ -146,7 +146,7 @@ li li {
 }
 li::marker {
   color: var(--color-primary-050);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 
@@ -173,7 +173,7 @@ main {
   margin: 0 auto;
   max-width: 40rem;
   min-height: 100dvh;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: opacity;
 }
 article {
@@ -187,7 +187,7 @@ nav {
   padding: 1rem 0 0;
   font-size: .9375rem;
   border-top: 1px solid var(--color-neutral-090);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: border-color;
 }
 
@@ -221,7 +221,7 @@ header h1 {
 header h1 span {
   display: block;
   color: var(--color-neutral-010);
-  transition: color .2s ease-in;
+  transition: color .2s ease-in-out;
 }
 header h1 span:nth-child(1) {
   color: var(--color-primary-050);
@@ -249,12 +249,12 @@ header [aria-disabled] {
 }
 header [aria-disabled] a::before {
   color: var(--color-primary-050);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 header [data-icon] span {
   color: var(--color-neutral-050);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 header [data-icon]::before {
@@ -272,7 +272,7 @@ header .font-num::before {
   padding: 0 .5rem 0 0;
   white-space: nowrap;
   color: transparent;
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color, padding, width;
 }
 header p {
@@ -299,17 +299,17 @@ header p a {
   width: 1rem;
   height: 1rem;
   fill: var(--color-neutral-100);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: fill, transform;
 }
 .theme svg path {
   transform-origin: 50%;
-  transition: .4s cubic-bezier(0.43, 0.06, 0, 1.21) transform;
+  transition: transform .4s cubic-bezier(0.43, 0.06, 0, 1.21);
 }
 .theme svg circle {
   transform: scale(.8) translateX(0);
   transform-origin: 50%;
-  transition: .5s cubic-bezier(0.4, 0, 0.2, 1) transform;
+  transition: transform .5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .dark .theme svg path {
   transform: rotate(1turn);
@@ -382,7 +382,7 @@ header p a {
     padding: 0;
     width: 2rem;
     z-index: 1;
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: right;
   }
   .side header {
@@ -396,7 +396,7 @@ header p a {
     opacity: 1;
     z-index: 0;
     pointer-events: none;
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: background;
   }
   .side .placeholder {
@@ -413,7 +413,7 @@ header p a {
     background: var(--color-neutral-100);
     border-radius: 1rem;
     z-index: 1;
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: background;
   }
   header a, .theme, .reload {
@@ -440,7 +440,7 @@ header p a {
     width: 1rem;
     height: 1px;
     background: var(--color-neutral-090);
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: background;
   }
   header ul div {
@@ -480,7 +480,7 @@ header p a {
     background: var(--color-neutral-100a);
     border-radius: 1rem;
     backdrop-filter: blur(.125rem);
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: background, backdrop-filter, -webkit-backdrop-filter;
   }
   .menu::before, .menu::after {
@@ -489,7 +489,7 @@ header p a {
     height: .125rem;
     border-radius: 1px;
     background: var(--color-primary-050);
-    transition: .2s ease-in;
+    transition: .2s ease-in-out;
     transition-property: background;
   }
   .menu::after {
@@ -532,6 +532,8 @@ header p a {
   margin: 0 0 0 .25rem;
   font: 1.125rem/1 "Inter", -apple-system, "MiSans", "HarmonyOS Sans", sans-serif;
   color: var(--color-primary-050);
+  transition: .2s ease-in-out;
+  transition-property: color;
 }
 [data-url="/"] p:nth-child(2) {
   margin: 0 0 0 -.25rem;
@@ -597,7 +599,7 @@ nav a::before {
   font-weight: 500;
   font-variant: all-petite-caps;
   color: var(--color-neutral-060);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 nav a[rel="next"] {
@@ -631,14 +633,14 @@ nav a[rel="next"] {
 }
 .journal-title {
   color: var(--color-neutral-010);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 .journal-meta {
   margin: -1.25rem 0 1.5rem 0;
   font-size: .875rem;
   color: var(--color-neutral-050);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 .journal-meta [data-icon] {
@@ -695,7 +697,7 @@ div.journal-summary {
 }
 .task-checked {
   color: var(--color-neutral-050);
-  transition: .2s ease-in;
+  transition: .2s ease-in-out;
   transition-property: color;
 }
 .task-checked::before {
@@ -796,7 +798,8 @@ div.journal-summary {
   z-index: 9;
   pointer-events: none;
   user-select: none;
-  transition: opacity .2s ease-in-out;
+  transition: .2s ease-in-out;
+  transition-property: opacity;
 }
 #lightbox img {
   max-width: calc(100dvw - 3rem);
