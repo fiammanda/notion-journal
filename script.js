@@ -419,7 +419,7 @@ async function loadPage(path = location.pathname) {
     html = `
       <article data-url="${path}">
         <section>
-          <p>俊俊的</p>
+          <p>nunu’s</p>
           <p>${site.title}</p>
           <figure>
             <img src="/logo.webp" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />

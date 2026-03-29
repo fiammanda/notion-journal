@@ -192,6 +192,7 @@ nav {
 }
 
 [lang="en"] {
+  font-family: "Inter", -apple-system, "MiSans", "HarmonyOS Sans", sans-serif;
   text-align: left;
   text-wrap: pretty;
 }
@@ -525,17 +526,16 @@ header p a {
   align-items: center;
 }
 [data-url="/"] p {
-  line-height: 1;
   user-select: none;
 }
 [data-url="/"] p:nth-child(1) {
-  font-size: 1.25rem;
-  letter-spacing: 1px;
+  margin: 0 0 0 .25rem;
+  font: 1.125rem/1 "Inter", -apple-system, "MiSans", "HarmonyOS Sans", sans-serif;
+  color: var(--color-primary-050);
 }
 [data-url="/"] p:nth-child(2) {
-  margin: 1rem 0 2rem -.25rem;
-  font-size: 4rem;
-  font-weight: 300;
+  margin: 0 0 0 -.25rem;
+  font: 4rem/1.5 "LXGW WenKai", var(--font-family);
 }
 [data-url="/"] figure {
   margin: 0 0 0 -.625rem;
