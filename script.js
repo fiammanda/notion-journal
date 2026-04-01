@@ -239,7 +239,7 @@ function renderHTML(raw) {
     };
 
     for (const id of blocks) {
-      const block = raw[id]?.value;
+      const block = raw[id]?.value?.value || raw[id]?.value;
       const type = block.type;
       const text = renderTitle(block.properties?.title || [])
         .replace(/\n/g, `<br />`)
