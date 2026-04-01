@@ -193,7 +193,8 @@ async function formatCalendar() {
 }
 
 function renderHTML(raw) {
-  const blocks = raw[Object.keys(raw)[0]].value?.content || [];
+  const parent = raw[Object.keys(raw)[0]].value;
+  const blocks = parent?.value?.content || parent?.content || [];
 
   function renderEmoji(html) {
     return Array.from(html).map((ch) => {
@@ -461,7 +462,7 @@ async function loadPage(path = location.pathname) {
               ${items.map((item) => {
                 const img = item.Cover
                   ? item.Cover[0].url.replace("www.notion.so", "webp.bot.nu")
-                  : slug === "game" ? "/log-game.jpg" : "";
+                  : ["show", "game"].includes(slug) ? `/log-${slug}.png` : ``;
                 return `<li>
                   <figure>
                     <img src="${img}" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
