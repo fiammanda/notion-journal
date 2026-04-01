@@ -70,7 +70,7 @@ async function fetchData() {
     }
   });
   const order = Object.fromEntries(Object.keys(site.type).map((type, index) => [type, index]));
-  const res = await fetch(`https://notion.nuu.qzz.io/list/1f687eb7522d8034a114c14834a8244c`);
+  const res = await fetch(`https://notion.res.qzz.io/list/1f687eb7522d8034a114c14834a8244c`);
   const raw = await res.json();
   raw.sort((x, y) => {
     const dateX = x.Date ? new Date(x.Date) : new Date(0);
@@ -265,7 +265,7 @@ function renderHTML(raw) {
         switch (type) {
           case "image":
             html += `<figure style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
-              <img src="https://webp.bot.nu/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnU,width__0.06,height__0.03,offset_x__0.9,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+              <img src="https://webp.res.qzz.io/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnU,width__0.06,height__0.03,offset_x__0.9,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
             </figure>`;
             break;
           case "text":
@@ -461,7 +461,7 @@ async function loadPage(path = location.pathname) {
             <ul class="journal-list">
               ${items.map((item) => {
                 const img = item.Cover
-                  ? item.Cover[0].url.replace("www.notion.so", "webp.bot.nu")
+                  ? item.Cover[0].url.replace("www.notion.so", "webp.res.qzz.io")
                   : ["show", "game"].includes(slug) ? `/log-${slug}.png` : ``;
                 return `<li>
                   <figure>
