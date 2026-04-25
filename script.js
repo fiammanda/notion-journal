@@ -91,7 +91,7 @@ async function fetchData() {
     const date = item.Date.replace(/-/g, "") || null;
     const type = item.Type || null;
     if (date) {
-      (site.data.date[date] ??= []).push(raw.indexOf(item));
+      (site.data.date[date] ??= []).unshift(raw.indexOf(item));
     }
     if (type) {
       (site.data.type[type] ??= []).push(raw.indexOf(item));
@@ -265,7 +265,7 @@ function renderHTML(raw) {
         switch (type) {
           case "image":
             html += `<figure style="aspect-ratio: ${1 / block.format.block_aspect_ratio}">
-              <img src="https://webp.res.qzz.io/image/${block.properties.source[0][0]}?table=block&id=${block.id}&visual_effect=watermark,text__QG51bnU,width__0.06,height__0.03,offset_x__0.9,offset_y__0.95,color__ffffffcc,font__Um9ib3Rv" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
+              <img src="https://webp.res.qzz.io/image/${block.properties.source[0][0]}?table=block&id=${block.id}" loading="lazy" onload="requestAnimationFrame(()=>this.removeAttribute('onload'))" />
             </figure>`;
             break;
           case "text":
@@ -339,12 +339,36 @@ async function initPage() {
   document.querySelector("header ul").append(fragment);
 
   const lightbox = document.getElementById("lightbox");
-  lightbox.addEventListener("click", (e) => {
+  lightbox.addEventListener("click", async (e) => {
     const img = e.target.closest("img");
     if (!img) {
       document.body.removeAttribute("class");
     } else if (img.classList.contains("zoomable")) {
-      lightbox.classList.toggle("zoom");
+      if (!lightbox.className) {
+        lightbox.className = "zoom";
+        return;
+      }
+      {
+        const timer = performance.now();
+        const start = lightbox.scrollTop;
+        const speed = 2;
+        const distance = lightbox.scrollTop;
+        const duration = Math.min(distance / speed, 200);
+        await new Promise((resolve) => {
+          function frame(now) {
+            const progress = Math.min((now - timer) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            lightbox.scrollTop = start * (1 - eased);
+            if (progress < 1) {
+              requestAnimationFrame(frame);
+            } else {
+              resolve();
+            }
+          }
+          requestAnimationFrame(frame);
+        });
+      }
+      lightbox.removeAttribute("class");
     }
   });
 
